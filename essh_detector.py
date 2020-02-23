@@ -7,9 +7,9 @@ import numpy as np
 import numpy.random as npr
 from distutils.util import strtobool
 
-from rcnn.processing.bbox_transform import nonlinear_pred, clip_boxes, landmark_pred, clip_points
-from rcnn.processing.generate_anchor import generate_anchors_fpn, anchors_plane
-from rcnn.processing.nms import gpu_nms_wrapper
+from rcnn_ag.processing.bbox_transform import nonlinear_pred, clip_boxes, landmark_pred, clip_points
+from rcnn_ag.processing.generate_anchor import generate_anchors_fpn, anchors_plane
+from rcnn_ag.processing.nms import gpu_nms_wrapper
 
 
 class ESSHDetector:
@@ -45,7 +45,7 @@ class ESSHDetector:
       self.model.bind(data_shapes=[('data', (1, 3, image_size[0], image_size[1]))], for_training=False)
       self.model.set_params(arg_params, aux_params)
     else:
-      from rcnn.core.module import MutableModule
+      from rcnn_ag.core.module import MutableModule
       image_size = (2400, 2400)
       data_shape = [('data', (1, 3, image_size[0], image_size[1]))]
       self.model = MutableModule(symbol=sym, data_names=['data'], label_names=None,
@@ -66,7 +66,7 @@ class ESSHDetector:
       else:
         im = img
       im = im.astype(np.float32)
-      # self.model.bind(data_shapes=[('data', (1, 3, image_size[0], image_size[1]))], for_training=False)
+      # self.model_ag.bind(data_shapes=[('data', (1, 3, image_size[0], image_size[1]))], for_training=False)
       im_info = [im.shape[0], im.shape[1], im_scale]
       im_tensor = np.zeros((1, 3, im.shape[0], im.shape[1]))
       for i in range(3):

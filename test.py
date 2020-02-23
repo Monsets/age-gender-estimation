@@ -13,12 +13,12 @@ def draw_label(image, point, label, font=cv2.FONT_HERSHEY_SIMPLEX, font_scale=1,
   cv2.putText(image, label, point, font, font_scale, (255, 255, 255), thickness)
 
 
-parser = argparse.ArgumentParser(description='face model test')
+parser = argparse.ArgumentParser(description='face model_ag test')
 # general
 parser.add_argument('--image-size', default='112,112', help='')
 parser.add_argument('--image', default='sample-images/test1.jpg', help='')
 # parser.add_argument('--image', default='sample-images/Tom_Hanks_54745.png', help='')
-parser.add_argument('--model', default='./model/m1/model,0', help='path to load model.')
+parser.add_argument('--model_ag', default='./model_ag/m1/model_ag,0', help='path to load model_ag.')
 parser.add_argument('--gpu', default=0, type=int, help='gpu id')
 parser.add_argument('--det', default=1, type=int, help='mtcnn or essh option, 0 means mtcnn, 1 means essh')
 args = parser.parse_args()
@@ -27,14 +27,14 @@ model = face_model.FaceModel(args)
 #img = cv2.imread('Tom_Hanks_54745.png')
 img = cv2.imread(args.image)
 img_db, bbox, points = model.get_input(img, args)
-#f1 = model.get_feature(img)
+#f1 = model_ag.get_feature(img)
 #print(f1[0:10])
 for _ in range(1):
   gender, age = model.get_ga(img_db)
 # time_now = datetime.datetime.now()
 # count = 200
 # for _ in range(count):
-#   gender, age = model.get_ga(img_db)
+#   gender, age = model_ag.get_ga(img_db)
 # time_now2 = datetime.datetime.now()
 # diff = time_now2 - time_now
 # print('time cost', diff.total_seconds()/count)

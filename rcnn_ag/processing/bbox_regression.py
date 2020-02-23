@@ -6,7 +6,7 @@ import numpy as np
 
 from ..logger import logger
 from .bbox_transform import bbox_overlaps, bbox_transform
-from rcnn.config import config
+from rcnn_ag.config import config
 
 
 def compute_bbox_regression_targets(rois, overlaps, labels):
