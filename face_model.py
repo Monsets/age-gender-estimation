@@ -18,6 +18,7 @@ from easydict import EasyDict as edict
 from essh_detector import ESSHDetector
 from mtcnn_detector import MtcnnDetector
 from retinaface import RetinaFace
+from face_detector import MxnetDetectionModel
 import face_image
 import face_preprocess
 
@@ -68,8 +69,11 @@ class FaceModel:
         elif args.det == 1:
             detector = ESSHDetector(prefix='./ssh-model/essh', epoch=0, ctx_id=args.gpu, test_mode=False)
             # detector = MtcnnDetector(model_folder=mtcnn_path, ctx=ctx, num_worker=1, accurate_landmark = True, threshold=[0.0,0.0,0.2])
-        else:
+        elif args.det == 2:
             detector = RetinaFace('./model/R50', 0, 0, 'net3')
+        else:
+            detector =  MxnetDetectionModel("weights/16and32", 0,
+                             scale=.4, gpu=0, margin=0.15)
 
         self.detector = detector
 
@@ -90,7 +94,7 @@ class FaceModel:
                 return None
             bbox = ret[:, 0:4]
             points = ret[:, 5:15].reshape((-1, 5, 2))
-        else:
+        elif args.det == 2:
             scales = [1]
             flip = False
             thresh = 0.8
@@ -100,6 +104,9 @@ class FaceModel:
                 return None
             bbox = np.array(bbox)
             points = np.array(points).reshape((-1, 5, 2))  # print(bbox)
+        else:
+            bbox = self.detector.detect(face_img)
+            points = None
 
         # print(bbox)
         # print(points)
@@ -108,7 +115,10 @@ class FaceModel:
             return None, None, None
         input_blob = np.zeros((bbox.shape[0], 3, 112, 112))
         for i in range(bbox.shape[0]):
-            nimg = face_preprocess.preprocess(face_img, bbox[i, :], points[i, :], image_size='112,112')
+            if points:
+                nimg = face_preprocess.preprocess(face_img, bbox[i, :], points[i, :], image_size='112,112')
+            else:
+                nimg = face_preprocess.preprocess(face_img, bbox[i, :], None, image_size='112,112')
             nimg = cv2.cvtColor(nimg, cv2.COLOR_BGR2RGB)
             aligned = np.transpose(nimg, (2, 0, 1))
             # input_blob = np.expand_dims(aligned, axis=0)

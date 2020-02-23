@@ -47,9 +47,10 @@ for _ in range(1):
 # b = bbox
 for b in bbox:
   cv2.rectangle(img, (int(b[0]), int(b[1])), (int(b[2]), int(b[3])), (0, 255, 0), 2)
-for p in points:
-  for i in range(5):
-    cv2.circle(img, (p[i][0], p[i][1]), 1, (0, 0, 255), 2)
+if points:
+  for p in points:
+    for i in range(5):
+      cv2.circle(img, (p[i][0], p[i][1]), 1, (0, 0, 255), 2)
 for i in range(len(age)):
   label = "{}, {}".format(int(age[i]), "F" if gender[i] == 0 else "M")
   draw_label(img, (int(bbox[i,0]), int(bbox[i,1])), label)
