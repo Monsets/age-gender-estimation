@@ -17,6 +17,7 @@ from time import sleep
 from easydict import EasyDict as edict
 from essh_detector import ESSHDetector
 from mtcnn_detector import MtcnnDetector
+from RetinaFace.retinaface import RetinaFace
 import face_image
 import face_preprocess
 
@@ -61,9 +62,12 @@ class FaceModel:
     mtcnn_path = os.path.join(os.path.dirname(__file__), 'mtcnn-model')
     if args.det==0:
       detector = MtcnnDetector(model_folder=mtcnn_path, ctx=ctx, num_worker=1, accurate_landmark = True, threshold=self.det_threshold)
-    else:
+    elif args.det == 1:
       detector = ESSHDetector(prefix='./ssh-model/essh', epoch=0, ctx_id=args.gpu, test_mode=False)
       # detector = MtcnnDetector(model_folder=mtcnn_path, ctx=ctx, num_worker=1, accurate_landmark = True, threshold=[0.0,0.0,0.2])
+    else:
+      detector = RetinaFace('./model/R50', 0, gpuid, 'net3')
+
     self.detector = detector
 
 
@@ -87,6 +91,8 @@ class FaceModel:
 
     #print(bbox)
     #print(points)
+    if len(bbox.shape[0]) < 1:
+      return None, None, None
     input_blob = np.zeros((bbox.shape[0], 3, 112, 112))
     for i in range(bbox.shape[0]):
       nimg = face_preprocess.preprocess(face_img, bbox[i,:], points[i,:], image_size='112,112')
