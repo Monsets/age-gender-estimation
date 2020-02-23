@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser(description='face model_ag test')
 parser.add_argument('--image-size', default='112,112', help='')
 parser.add_argument('--image', default='sample-images/test1.jpg', help='')
 # parser.add_argument('--image', default='sample-images/Tom_Hanks_54745.png', help='')
-parser.add_argument('--model_ag', default='./model_ag/m1/model_ag,0', help='path to load model_ag.')
+parser.add_argument('--model', default='./model_ag/m1/model,0', help='path to load model_ag.')
 parser.add_argument('--gpu', default=0, type=int, help='gpu id')
 parser.add_argument('--det', default=1, type=int, help='mtcnn or essh option, 0 means mtcnn, 1 means essh')
 args = parser.parse_args()
@@ -53,6 +53,5 @@ for p in points:
 for i in range(len(age)):
   label = "{}, {}".format(int(age[i]), "F" if gender[i] == 0 else "M")
   draw_label(img, (int(bbox[i,0]), int(bbox[i,1])), label)
-cv2.imshow("detection result", img)
-cv2.waitKey(0)
+cv2.imwrite('result.png', img)
 
